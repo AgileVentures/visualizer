@@ -5,7 +5,7 @@ body {
 
 }
 
-.top-bar, .top-bar-left ul, li {
+.top-bar, .top-bar-left ul, .top-bar ul, li {
   background-color:  #E67526;
 }
 
@@ -31,7 +31,25 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: Quicksand;
+}
+h1 {
+  font-size: 3rem;
+}
+h2 {
+  font-size: 2.5rem;
+}
+h3 {
+  font-size: 2rem;
+}
+h4{
+  font-size: 1.5rem;
+}
+h5{
+  font-size: 1rem;
+}
 
+li, li a, li a:visited, li a:hover, li a :active {
+  background: none;
 }
 
 .display-table {
@@ -62,8 +80,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .row {
   max-width: 75rem;
-  margin-left: auto;
-  margin-right: auto; }
+  margin: 1rem auto 1rem auto;}
   .row::before, .row::after {
     content: ' ';
     display: table; }
@@ -141,6 +158,30 @@ h1, h2, h3, h4, h5, h6 {
 
 }
 
+/*landing dashboard list*/
+ul.list{
+  margin: 0;
+  padding: 0;
+}
+
+li.account-name{
+  color: #fff;
+  list-style: none;
+  background-color: #2B4450;
+}
+li.property-name{
+  background-color: #fff;
+  color: #000;
+  list-style: none;
+  border-bottom: #ccc dotted thin;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+li.property-profile{
+  color: #000;
+  list-style: none;
+}
 /*Colors*/
 
 /*Team*/

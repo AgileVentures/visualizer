@@ -1,25 +1,23 @@
 .row
   - if @account_summaries
-    %h3
-    Properties for
-    = @account_summaries.username
-    %ul
+    %h4
+      Properties for
+      = @account_summaries.username
+    %ul.list
       - @account_summaries.items.each do |item|
-        %li
-          = item.name
-          (#{item.id})
+        %li.account-name
+          %p{style: 'padding: 0.8rem 0 0 0.8rem; font-weight: bold; */'}
+            = item.name
           - if item.web_properties
-            %ul
+            %ul.list
               - item.web_properties.each do |property|
-                %li
+                %li.property-name
                   = property.name
-                  = "(#{property.id})"
                   - if property.profiles
-                    %ul
+                    %ul.list
                       - property.profiles.each do |profile|
-                        %li
+                        %li.property-profile
                           =  link_to profile.name, get_data_path(account_id: item.id, web_property_id: property.id, profile_id: profile.id), method: :get
-                          (#{profile.id})
 
 .row
   - if @image
