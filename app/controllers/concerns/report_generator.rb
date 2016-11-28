@@ -9,6 +9,9 @@ module ReportGenerator
                           font_color: '#7C786A',
                           background_colors: 'transparent'}
 
+  DEFAULT_START_DATE = Date.today.last_week.beginning_of_week.strftime('%F')
+  DEFAULT_END_DATE = Date.today.last_week.end_of_week.strftime('%F')
+
   def self.generate(service, params, property)
     basic_stats = get_basic_stats(service, params)
     sources = get_sources(service, params)
@@ -55,17 +58,20 @@ module ReportGenerator
       self.font_weight = BoldWeight
     end
 
-    sub_title_text = Draw.new
-    sub_title_text.annotate(header, 0, 0, 20, 45, "Website URL: #{property.website_url}") do
-      sub_title_text.gravity = NorthEastGravity
-      self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.otf"
-      self.pointsize = 13
-      self.fill = '#EB6E44'
-      self.font_weight = BoldWeight
+    if property.website_url.length < 25
+      sub_title_text = Draw.new
+      sub_title_text.annotate(header, 0, 0, 20, 45, "Website URL: #{property.website_url}") do
+        sub_title_text.gravity = NorthEastGravity
+        self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.otf"
+        self.pointsize = 13
+        self.fill = '#EB6E44'
+        self.font_weight = BoldWeight
+      end
     end
 
+
     date_text = Draw.new
-    date_text.annotate(header, 0, 0, 20, 45, "Week of  #{Date.today.beginning_of_week.strftime('%B %d')} - #{Date.today.end_of_week.strftime('%B %d')}") do
+    date_text.annotate(header, 0, 0, 20, 45, "Week of  #{Date.today.last_week.beginning_of_week.strftime('%B %d')} - #{Date.today.last_week.end_of_week.strftime('%B %d')}") do
       date_text.gravity = NorthWestGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.otf"
       self.pointsize = 13
@@ -147,8 +153,8 @@ module ReportGenerator
 
   def self.get_basic_stats(service, params)
     profile_id = "ga:#{params[:profile_id]}"
-    start_date = Date.today.beginning_of_week.strftime('%F')
-    end_date = Date.today.end_of_week.strftime('%F')
+    start_date = Date.today.last_week.beginning_of_week.strftime('%F')
+    end_date = DEFAULT_END_DATE
     metrics = 'ga:sessions, ga:uniquePageviews'
     data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
         dimensions: 'ga:date'
@@ -158,8 +164,8 @@ module ReportGenerator
 
   def self.get_sources(service, params)
     profile_id = "ga:#{params[:profile_id]}"
-    start_date = Date.today.beginning_of_week.strftime('%F')
-    end_date = Date.today.end_of_week.strftime('%F')
+    start_date = DEFAULT_START_DATE
+    end_date = DEFAULT_END_DATE
     metrics = 'ga:sessions'
     data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
         dimensions: 'ga:userType'
@@ -169,8 +175,8 @@ module ReportGenerator
 
   def self.get_os_sources(service, params)
     profile_id = "ga:#{params[:profile_id]}"
-    start_date = Date.today.beginning_of_week.strftime('%F')
-    end_date = Date.today.end_of_week.strftime('%F')
+    start_date = DEFAULT_START_DATE
+    end_date = DEFAULT_END_DATE
     metrics = 'ga:sessions'
     data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
         dimensions: 'ga:operatingSystem'
@@ -180,21 +186,21 @@ module ReportGenerator
 
   def self.get_traffic_sources(service, params)
     profile_id = "ga:#{params[:profile_id]}"
-    start_date = Date.today.beginning_of_week.strftime('%F')
-    end_date = Date.today.end_of_week.strftime('%F')
+    start_date = DEFAULT_START_DATE
+    end_date = DEFAULT_END_DATE
     metrics = 'ga:pageviews'
     data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
         dimensions: 'ga:source',
         filters: 'ga:medium==referral',
-        sort: 'ga:pageviews'
+        sort: '-ga:pageviews'
     })
     return data
   end
 
   def self.get_country_sources(service, params)
     profile_id = "ga:#{params[:profile_id]}"
-    start_date = Date.today.beginning_of_week.strftime('%F')
-    end_date = Date.today.end_of_week.strftime('%F')
+    start_date = DEFAULT_START_DATE
+    end_date = DEFAULT_END_DATE
     metrics = 'ga:sessions'
     data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
         dimensions: 'ga:country',
@@ -222,6 +228,7 @@ module ReportGenerator
     line.show_vertical_markers = true
     line.left_margin=10.0
     line.right_margin=10.0
+    line.label_formatting = '%.0f'
     line.write(File.join('public', 'tmp', "line_#{file_name}"))
   end
 
@@ -234,6 +241,7 @@ module ReportGenerator
     pie.data sources.rows[1][0].pluralize.to_sym, sources.rows[1][1].to_i
     pie.left_margin = 0
     pie.right_margin = 0
+    pie.label_formatting = '%.0f'
     pie.write(File.join('public', 'tmp', "pie_#{file_name}"))
   end
 
@@ -248,26 +256,31 @@ module ReportGenerator
     net.top_margin = 45
     net.left_margin = 30
     net.right_margin = 30
+    net.label_formatting = '%.0f'
     os_sources[0..4].each { |data| net.data data[0].to_sym, data[1].to_i }
     net.write(File.join('public', 'tmp', "spider_#{file_name}"))
   end
 
   def self.generate_referers_graph(traffic_sources, file_name)
     labels = {}
-    traffic_sources.rows.reverse[0..4].each_with_index { |d, i| labels[i] = d[0] }
+    traffic_sources.rows[0..4].each_with_index { |d, i| labels[i] = d[0] }
     line = Gruff::SideBar.new(265)
     line.theme = DEFAULT_CHART_COLORS
     line.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.otf"
     line.title = 'Top Referring Sites'
     line.labels = labels
     line.hide_legend=true
-    traffic_sources.rows.reverse[0..4].each { |data| line.data data[0], data[1].to_i }
-    line.maximum_value= (traffic_sources.rows.reverse[0][1].to_i*1.10).to_i.round(-1)
-    line.minimum_value= 10
+    traffic_sources.rows[0..4].each { |data| line.data data[0], data[1].to_i }
+    first_value = traffic_sources.rows[0][1].to_i
+    last_value = traffic_sources.rows[-1][1].to_i
+    line.maximum_value = first_value > 10 ? (first_value.to_i*1.20).to_i.round(-1) : first_value
+    line.minimum_value = last_value > 10 ? (last_value.to_i*1.20).to_i.round(-1) : 0
+    line.y_axis_increment = 10
     line.use_data_label=true
     line.show_labels_for_bar_values = true
     line.left_margin=0
     line.right_margin=0
+    line.label_formatting = '%.0f'
 
     line.write(File.join('public', 'tmp', "referrers_#{file_name}"))
   end
@@ -277,21 +290,20 @@ module ReportGenerator
     acc.theme = DEFAULT_CHART_COLORS
     acc.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.otf"
     acc.title = 'Traffic by country'
-    #labels = {}
-    #sources.rows[0..4].each_with_index { |d, i| labels[i] = d[0] }
-    #acc.labels = labels
     sources.rows[0..4].each { |data| acc.data data[0].to_sym, [data[1].to_i] }
     acc.left_margin = 0
     acc.right_margin = 40
     acc.minimum_value = 0
-    acc.maximum_value = (sources.rows[0][1].to_i*1.20).to_i.round(-1)
+    acc.y_axis_increment = 10
+    first_value = sources.rows[0][1].to_i
+    acc.maximum_value = first_value > 10 ? (sources.rows[0][1].to_i*1.20).to_i.round(-1) : first_value
     acc.use_data_label=true
     acc.show_labels_for_bar_values = true
     acc.hide_legend=true
     acc.marker_count = 5
+    acc.label_formatting = '%.0f'
     str = ''
     sources.rows[0..4].each { |c| str += "- #{c[0]} " }
-    #binding.pry
     acc.x_axis_label = str
 
 
