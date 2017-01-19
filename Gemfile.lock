@@ -87,6 +87,10 @@ GEM
     em-websocket (0.5.1)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
+    email_spec (2.1.0)
+      htmlentities (~> 4.3.3)
+      launchy (~> 2.1)
+      mail (~> 2.6.3)
     erubis (2.7.0)
     eventmachine (1.2.1)
     excon (0.54.0)
@@ -169,6 +173,7 @@ GEM
       haml (~> 4.0.0)
       nokogiri (~> 1.6.0)
       ruby_parser (~> 3.5)
+    htmlentities (4.3.4)
     http_parser.rb (0.6.0)
     httpclient (2.8.2.4)
     hurley (0.2)
@@ -358,6 +363,7 @@ DEPENDENCIES
   cucumber-rails
   database_cleaner
   dotenv-rails
+  email_spec
   factory_girl_rails
   foundation-icons-sass-rails
   foundation-rails
@@ -394,4 +400,4 @@ RUBY VERSION
    ruby 2.3.1p112
 
 BUNDLED WITH
-   1.13.6
+   1.13.7

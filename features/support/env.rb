@@ -1,5 +1,6 @@
 require 'cucumber/rails'
 require 'capybara-screenshot/cucumber'
+require 'email_spec/cucumber'
 require_relative 'temporal'
 
 ActionController::Base.allow_rescue = false
