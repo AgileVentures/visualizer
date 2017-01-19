@@ -32,7 +32,7 @@
         %h5 Email
         %small not implemented
         = form_tag send_email_path, method: :post do
-          = text_field_tag 'email-input', nil, placeholder: 'Email'
+          = text_field_tag 'email', nil, placeholder: 'Email'
           %input{type: 'submit', class: 'button', value: 'Send'}
       #webhook
         %h5 Slack - using a webhook

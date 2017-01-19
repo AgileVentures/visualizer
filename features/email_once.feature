@@ -4,6 +4,6 @@ Feature: As a user
 
   Scenario: I send an email
     Given I am on the "Get Data" page
-    When I fill in "email-input" with "example@example.com"
+    When I fill in "email" with "example@example.com"
     And I click on "Send"
     Then "example@example.com" should receive an email
