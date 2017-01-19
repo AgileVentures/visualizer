@@ -7,3 +7,5 @@ Feature: As a user
     When I fill in "email" with "example@example.com"
     And I click on "Send"
     Then "example@example.com" should receive an email
+    When they open the email
+    Then they should see an attachment with the email

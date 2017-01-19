@@ -20,6 +20,7 @@ gem 'rmagick', require: 'rmagick'
 gem 'gruff'
 gem 'slack-ruby-client'
 gem 'slack-notifier', require: 'slack-notifier'
+gem 'sendgrid-actionmailer'
 
 group :development, :test do
   gem 'dotenv-rails'
