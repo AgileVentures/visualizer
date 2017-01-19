@@ -44,14 +44,12 @@ class PagesController < ApplicationController
 
   def get_data
     begin
-      @property = @service.get_web_property(params[:account_id],
-                                            params[:web_property_id])
-
-      if @property == 'account summary'
-        # This if/else is here for testing purposes only.
-        @property = OpenStruct.new ( { name: 'Amber'})
+      if Rails.env == 'test'
+        @property = OpenStruct.new( { name: 'Amber'})
         @image = 'fake_report.png'
       else
+        @property = @service.get_web_property(params[:account_id],
+                                              params[:web_property_id])
         @image = ReportGenerator.generate(@service, params, @property)
       end
 
