@@ -12,6 +12,8 @@ Rails.application.routes.draw do
 
   post :notify_with_webhook, controller: :subscriptions, action: :notify_with_webhook
 
+  post :send_email, controller: :emails, action: :send_email, as: :send_email
+
   root controller: :pages, action: :index
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

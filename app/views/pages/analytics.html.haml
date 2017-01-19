@@ -31,9 +31,9 @@
       #email
         %h5 Email
         %small not implemented
-        - form_tag send_email_path do
-          %input#email-input{type: 'text', placeholder: 'Email'}
-          = button_tag 'Send', id: 'email-button', class: 'button'
+        = form_tag send_email_path, method: :post do
+          = text_field_tag 'email-input', nil, placeholder: 'Email'
+          %input{type: 'submit', class: 'button', value: 'Send'}
       #webhook
         %h5 Slack - using a webhook
         %small Experimental
