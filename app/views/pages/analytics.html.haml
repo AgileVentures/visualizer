@@ -31,7 +31,7 @@
       #email
         %h5 Email
         %small not implemented
-        = form_for send_email_path
+        - form_tag send_email_path do
           %input#email-input{type: 'text', placeholder: 'Email'}
           = button_tag 'Send', id: 'email-button', class: 'button'
       #webhook
