@@ -331,7 +331,6 @@ module ReportGenerator
   def self.calculate_traffic(basic_stats)
     previous_period, current_period = basic_stats.rows.each_slice(basic_stats.rows.size/2).to_a
     t = Period.new(previous_period, current_period)
-    #binding.pry
   end
 
 
