@@ -1,4 +1,4 @@
-describe ReportGenerator do
+describe AnalyticsPeriod do
 
   let(:basic_increase_stats) { double(Google::Apis::AnalyticsV3::GaData, rows: [['20161118', '50', '100'],
                                                                                 ['20161119', '50', '100'],
@@ -37,6 +37,12 @@ describe ReportGenerator do
                                                     start_date: '20161118',
                                                     end_date: '20161201')
   ) }
+
+  let(:service) { double('Mock', get_ga_data: OpenStruct.new(profile_id: "ga:", start_date: "2017-01-05", end_date: "2017-01-18", metrics: "ga:sessions, ga:uniquePageviews",
+      dimensions: 'ga:date')) }
+  let(:params) { {} }
+
+  subject { described_class.new(service, params) }
 
   describe 'generates a comparison text for increased traffic' do
     let!(:period) { subject.calculate_traffic(basic_increase_stats) }

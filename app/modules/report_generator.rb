@@ -11,25 +11,18 @@ module ReportGenerator
   DEFAULT_START_DATE = 8.days.ago.strftime('%F')
   DEFAULT_END_DATE = 1.day.ago.strftime('%F')
 
-  def self.generate(service, params, property)
-    basic_stats = get_basic_stats(service, params)
-    sources = get_sources(service, params)
-    os_sources = get_os_sources(service, params)
-    traffic_sources = get_traffic_sources(service, params)
-    country_sources = get_country_sources(service, params)
-    file_name = "#{property.name.downcase.gsub(' ', '_')}_week_#{Date.today.strftime('%U')}.png"
-    generate_line_graph(basic_stats.rows.last(7), file_name)
-    generate_pie_chart(sources, file_name)
-    generate_net_chart(os_sources, file_name)
-    generate_referers_graph(traffic_sources, file_name)
-    generate_countries_graph(country_sources, file_name)
-    construct_report(property, file_name, basic_stats, sources)
+  def self.generate(asset)
+    file_name = "#{asset.property.name.downcase.gsub(' ', '_')}_week_#{Date.today.strftime('%U')}.png"
+    generate_line_graph(asset.basic_stats.rows.last(7), file_name)
+    generate_pie_chart(asset.sources, file_name)
+    generate_net_chart(asset.os_sources, file_name)
+    generate_referers_graph(asset.traffic_sources, file_name)
+    generate_countries_graph(asset.country_sources, file_name)
+    construct_report(asset, file_name)
   end
 
-  #private
-
-  def self.construct_report(property, file, dataset, sources)
-    traffic_stats = calculate_traffic(dataset)
+  def self.construct_report(asset, file)
+      traffic_stats = asset.basic_stats
     report = Image.new(550, 820) do
       self.background_color = '#FFF5C3'
       self.interlace = PNGInterlace
@@ -49,7 +42,7 @@ module ReportGenerator
     end
 
     title_text = Draw.new
-    title_text.annotate(header, 0, 0, 20, 15, "Weekly Insights for #{property.name}") do
+    title_text.annotate(header, 0, 0, 20, 15, "Weekly Insights for #{asset.property.name}") do
       title_text.gravity = NorthWestGravity
       self.pointsize = 20
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.ttf"
@@ -57,9 +50,9 @@ module ReportGenerator
       self.font_weight = BoldWeight
     end
 
-    if property.website_url.length < 25
+    if asset.property.website_url.length < 25
       sub_title_text = Draw.new
-      sub_title_text.annotate(header, 0, 0, 20, 45, "Website URL: #{property.website_url}") do
+      sub_title_text.annotate(header, 0, 0, 20, 45, "Website URL: #{asset.property.website_url}") do
         sub_title_text.gravity = NorthEastGravity
         self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.ttf"
         self.pointsize = 13
@@ -70,7 +63,7 @@ module ReportGenerator
 
 
     date_text = Draw.new
-    date_text.annotate(header, 0, 0, 20, 45, "Week of  #{traffic_stats.current_start_date.strftime('%B %d')} - #{traffic_stats.current_end_date.strftime('%B %d')}") do
+    date_text.annotate(header, 0, 0, 20, 45, "Week of  #{asset.current_start_date.strftime('%B %d')} - #{asset.current_end_date.strftime('%B %d')}") do
       date_text.gravity = NorthWestGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.ttf"
       self.pointsize = 13
@@ -89,7 +82,7 @@ module ReportGenerator
     end
 
     traffic_metrics_text = Draw.new
-    message = "Your site attracted #{traffic_stats.current_visits } visitors this week. \nThat's a #{traffic_stats.change_in_percent} #{traffic_stats.change_status} compared to the week before"
+    message = "Your site attracted #{asset.current_visits } visitors this week. \nThat's a #{asset.change_in_percent} #{asset.change_status} compared to the week before"
     traffic_metrics_text.annotate(report, 0, 0, 20, 285, message) do
       traffic_metrics_text.gravity = NorthGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Bold.ttf"
@@ -99,7 +92,7 @@ module ReportGenerator
     end
 
     sessions_text = Draw.new
-    sessions_text.annotate(report, 0, 0, 300, 123, "Visits: #{traffic_stats.current_visits}") do
+    sessions_text.annotate(report, 0, 0, 300, 123, "Visits: #{asset.current_visits}") do
       sessions_text.gravity = NorthWestGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Regular.ttf"
       self.pointsize = 16
@@ -108,7 +101,7 @@ module ReportGenerator
     end
 
     page_views_text = Draw.new
-    page_views_text.annotate(report, 0, 0, 300, 148, "Page views: #{traffic_stats.current_page_views}") do
+    page_views_text.annotate(report, 0, 0, 300, 148, "Page views: #{asset.current_page_views}") do
       page_views_text.gravity = NorthWestGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Regular.ttf"
       self.pointsize = 16
@@ -117,7 +110,7 @@ module ReportGenerator
     end
 
     new_visitors_text = Draw.new
-    new_visitors_text.annotate(report, 0, 0, 300, 173, "#{sources.rows[0][0].pluralize}: #{sources.rows[0][1]}") do
+    new_visitors_text.annotate(report, 0, 0, 300, 173, "#{asset.sources.rows[0][0].pluralize}: #{asset.sources.rows[0][1]}") do
       new_visitors_text.gravity = NorthWestGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Regular.ttf"
       self.pointsize = 16
@@ -126,7 +119,7 @@ module ReportGenerator
     end
 
     returning_visitors_text = Draw.new
-    returning_visitors_text.annotate(report, 0, 0, 300, 198, "#{sources.rows[1][0].pluralize}: #{sources.rows[1][1]}") do
+    returning_visitors_text.annotate(report, 0, 0, 300, 198, "#{asset.sources.rows[1][0].pluralize}: #{asset.sources.rows[1][1]}") do
       returning_visitors_text.gravity = NorthWestGravity
       self.font = "#{Rails.root}/app/assets/fonts/Quicksand-Regular.ttf"
       self.pointsize = 16
@@ -158,65 +151,6 @@ module ReportGenerator
 
     report.write(File.join('public', 'tmp', file))
     return "/tmp/#{file}"
-  end
-
-  def self.get_basic_stats(service, params)
-    profile_id = "ga:#{params[:profile_id]}"
-    start_date = (Date.parse(DEFAULT_START_DATE) - 6.days).strftime('%F')
-    end_date = DEFAULT_END_DATE
-    metrics = 'ga:sessions, ga:uniquePageviews'
-    data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
-        dimensions: 'ga:date'
-    })
-    return data
-  end
-
-  def self.get_sources(service, params)
-    profile_id = "ga:#{params[:profile_id]}"
-    start_date = DEFAULT_START_DATE
-    end_date = DEFAULT_END_DATE
-    metrics = 'ga:sessions'
-    data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
-        dimensions: 'ga:userType'
-    })
-    return data
-  end
-
-  def self.get_os_sources(service, params)
-    profile_id = "ga:#{params[:profile_id]}"
-    start_date = DEFAULT_START_DATE
-    end_date = DEFAULT_END_DATE
-    metrics = 'ga:sessions'
-    data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
-        dimensions: 'ga:operatingSystem'
-    })
-    return data.rows.sort! { |a, b| a[1].to_i <=> b[1].to_i }.reverse
-  end
-
-  def self.get_traffic_sources(service, params)
-    profile_id = "ga:#{params[:profile_id]}"
-    start_date = DEFAULT_START_DATE
-    end_date = DEFAULT_END_DATE
-    metrics = 'ga:pageviews'
-    data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
-        dimensions: 'ga:source',
-        filters: 'ga:medium==referral',
-        sort: '-ga:pageviews'
-    })
-    return data
-  end
-
-  def self.get_country_sources(service, params)
-    profile_id = "ga:#{params[:profile_id]}"
-    start_date = DEFAULT_START_DATE
-    end_date = DEFAULT_END_DATE
-    metrics = 'ga:sessions'
-    data = service.get_ga_data(profile_id, start_date, end_date, metrics, {
-        dimensions: 'ga:country',
-        filters: 'ga:medium==referral',
-        sort: '-ga:sessions'
-    })
-    return data
   end
 
   def self.generate_line_graph(dataset, file_name)
@@ -317,22 +251,13 @@ module ReportGenerator
     sources.rows[0..4].each { |c| str += "- #{c[0]} " }
     acc.x_axis_label = str
 
-
     acc.write(File.join('public', 'tmp', "countries_#{file_name}"))
 
   end
-
 
   def self.group_by_weeks(basic_stats)
     array = basic_stats.rows.map { |sd| [Date.parse(sd[0]), sd[1..-1]].flatten }
     Hash[array.group_by { |a| a[0].cweek }.map { |y, items| [y, items] }]
   end
-
-  def self.calculate_traffic(basic_stats)
-    previous_period, current_period = basic_stats.rows.each_slice(basic_stats.rows.size/2).to_a
-    t = Period.new(previous_period, current_period)
-    #binding.pry
-  end
-
 
 end
