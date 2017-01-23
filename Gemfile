@@ -18,6 +18,8 @@ gem 'google-api-client', '~> 0.9.20', require: 'google/apis/analytics_v3'
 gem 'mailchimp-api', require: 'mailchimp'
 gem 'rmagick', require: 'rmagick'
 gem 'gruff'
+gem 'slack-ruby-client'
+gem 'slack-notifier', require: 'slack-notifier'
 
 group :development, :test do
   gem 'dotenv-rails'

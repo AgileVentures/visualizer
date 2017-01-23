@@ -23,5 +23,6 @@ module Visualizer
       generate.routing_specs false
       generate.controller_specs false
     end
+
   end
 end

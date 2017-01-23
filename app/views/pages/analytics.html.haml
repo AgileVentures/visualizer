@@ -1,8 +1,9 @@
 .row
   - if @account_summaries
-    %h4
-      Properties for
-      = @account_summaries.username
+    #head
+      %h4
+        Properties for
+        = @account_summaries.username
     %ul.list
       - @account_summaries.items.each do |item|
         %li.account-name
@@ -17,10 +18,29 @@
                     %ul.list
                       - property.profiles.each do |profile|
                         %li.property-profile
-                          =  link_to profile.name, get_data_path(account_id: item.id, web_property_id: property.id, profile_id: profile.id), method: :get
-
-.row
-  - if @image
-    %h3
-      = @property.name
-    = image_tag @image
+                          =  link_to profile.name, get_data_path(account_id: item.id, web_property_id: property.id, profile_id: profile.id)
+- if @image
+  .row
+    .large-8.columns
+      %h3
+        = @property.name
+      = image_tag @image, id: 'report-img'
+    .large-4.columns{style: 'margin-top: 50px;'}
+      %h4 Share report
+      %p Looking good. Why not sharing this report with people in your organization?
+      #email
+        %h5 Email
+        %small not implemented
+        %input#email-input{type: 'text', placeholder: 'Email', disabled: true}
+        = button_tag 'Send', id: 'email-button', class: 'button', disabled: true
+      #webhook
+        %h5 Slack - using a webhook
+        %small Experimental
+        %input#webhook-input{type: 'text', placeholder: 'Slack webhook URL'}
+        = button_tag 'Post with Webhook', id: 'slack-webhook-button', class: 'button', disabled: true
+      #api
+        %h5 Slack - using a Bot-user
+        %input#api-input{type: 'text', placeholder: 'Slack API Token'}
+        = button_tag 'Check API', id: 'slack-api-button', class: 'button', disabled: true
+      .api_response
+      .api_form

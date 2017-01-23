@@ -7,3 +7,14 @@ Feature: As a potential user
     Given I am on the landing page
     And I click on "CONNECT ACCOUNT"
     Then show me the page
+
+
+
+    Scenario: Test
+      Given there are ”20” articles in the publication
+      When I visit the page for articles
+      Then I should see a list of ”20” articles
+
+
+
+

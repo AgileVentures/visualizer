@@ -98,6 +98,8 @@ GEM
       railties (>= 3.0.0)
     faraday (0.10.0)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.10.1)
+      faraday (>= 0.7.4, < 1.0)
     ffi (1.9.14)
     formatador (0.2.5)
     foundation-icons-sass-rails (3.0.0)
@@ -108,6 +110,7 @@ GEM
       sass (>= 3.3.0, < 3.5)
       sprockets-es6 (>= 0.9.0)
     gherkin (4.0.0)
+    gli (2.14.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
     google-api-client (0.9.20)
@@ -160,6 +163,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
+    hashie (3.4.6)
     html2haml (2.0.0)
       erubis (~> 2.7.0)
       haml (~> 4.0.0)
@@ -295,6 +299,15 @@ GEM
       faraday (~> 0.9)
       jwt (~> 1.5)
       multi_json (~> 1.10)
+    slack-notifier (1.5.1)
+    slack-ruby-client (0.7.7)
+      activesupport
+      faraday
+      faraday_middleware
+      gli
+      hashie
+      json
+      websocket-driver
     slop (3.6.0)
     spring (2.0.0)
       activesupport (>= 4.2)
@@ -368,6 +381,8 @@ DEPENDENCIES
   rspec-rails
   sass-rails (~> 5.0)
   shoulda-matchers
+  slack-notifier
+  slack-ruby-client
   spring
   spring-watcher-listen (~> 2.0.0)
   timecop

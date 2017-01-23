@@ -31,6 +31,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: Quicksand;
+  font-weight: bold;
+  color: #7C786A;
 }
 h1 {
   font-size: 3rem;
@@ -45,7 +47,8 @@ h4{
   font-size: 1.5rem;
 }
 h5{
-  font-size: 1rem;
+  font-size: 1.1rem;
+
 }
 
 li, li a, li a:visited, li a:hover, li a :active {
