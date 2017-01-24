@@ -1,3 +1,5 @@
+
+
 # Analytics Visualizer
 
 SaaS application allowing users to get graphic reports about their website analytics.
@@ -5,6 +7,9 @@ SaaS application allowing users to get graphic reports about their website analy
 The application accesses Google Analytics API and formats a weekly or monthly report.
 
 Visualizer is going to run on a freemium model where users get a basic report for free and a more compehensive roport for 5 USD a month.
+
+Travis CI: [![Build Status](https://travis-ci.org/AgileVentures/visualizer.svg?branch=master)](https://travis-ci.org/AgileVentures/visualizer)
+Coveralls CI: [![Coverage Status](https://coveralls.io/repos/github/AgileVentures/visualizer/badge.svg?branch=develop)](https://coveralls.io/github/AgileVentures/visualizer?branch=develop)
 
 ### Resources
 
