@@ -39,6 +39,7 @@ group :development, :test do
   gem 'phantomjs', require: 'phantomjs/poltergeist'
   gem 'timecop'
   gem 'awesome_print', require: 'awesome_print'
+  gem 'codeclimate-test-reporter'
 end
 
 group :development do
