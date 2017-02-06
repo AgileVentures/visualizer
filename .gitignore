@@ -24,4 +24,3 @@ npm-debug.log
 # Ignore generated image files during development
 
 app/assets/images/data_*
-
