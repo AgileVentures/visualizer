@@ -40,6 +40,7 @@ group :development, :test do
   gem 'timecop'
   gem 'awesome_print', require: 'awesome_print'
   gem 'codeclimate-test-reporter'
+  gem 'coveralls', require: false
 end
 
 group :development do
